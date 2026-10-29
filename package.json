@@ -4,7 +4,6 @@
   "description": "Outreach chains: one file describes a chain, one engine runs them all",
   "type": "module",
   "license": "SEE LICENSE IN LICENSE.md",
-  "private": true,
   "engines": {
     "node": ">=22"
   },
