@@ -110,8 +110,7 @@ export function letterIdFor(chain, step, segment) {
   return slug ? `${segment}-${chain}-${slug}` : `${segment}-${chain}`
 }
 
-const isPlainObject = value =>
-  Boolean(value) && typeof value === 'object' && !Array.isArray(value)
+const isPlainObject = value => Boolean(value) && typeof value === 'object' && !Array.isArray(value)
 
 function checkStep(step, index, chain, faults) {
   const where = `${chain.id} step ${index + 1}`
@@ -126,10 +125,14 @@ function checkStep(step, index, chain, faults) {
     faults.push(`${where} is the first step, so its \`at\` is nought`)
   }
   if (!CHANNELS.includes(step.channel)) {
-    faults.push(`${where} names channel ${JSON.stringify(step.channel)}, which is not one of ${CHANNELS.join(', ')}`)
+    faults.push(
+      `${where} names channel ${JSON.stringify(step.channel)}, which is not one of ${CHANNELS.join(', ')}`
+    )
   }
   if (index > 0 && !slugOf(step)) {
-    faults.push(`${where} needs a \`slug\`, since its id is built from it and step one took the bare chain id`)
+    faults.push(
+      `${where} needs a \`slug\`, since its id is built from it and step one took the bare chain id`
+    )
   }
   const alternatives = Array.isArray(step.variants) && step.variants.length ? step.variants : [step]
   if (step.variants != null && !Array.isArray(step.variants)) {
@@ -264,7 +267,9 @@ export function defineChain(spec) {
   if (!isPlainObject(spec)) throw new TypeError('defineChain takes an object')
   const { id, name } = spec
   if (typeof id !== 'string' || !/^[a-z][a-z0-9-]*$/.test(id)) {
-    faults.push(`a chain id is lower case, starts with a letter, and holds only letters, digits and hyphens; this one is ${JSON.stringify(id)}`)
+    faults.push(
+      `a chain id is lower case, starts with a letter, and holds only letters, digits and hyphens; this one is ${JSON.stringify(id)}`
+    )
   }
   if (typeof name !== 'string' || !name) faults.push(`chain ${id} needs a name`)
   const steps = Array.isArray(spec.steps) ? spec.steps : null
@@ -275,11 +280,14 @@ export function defineChain(spec) {
     const days = steps.map(one => one?.at)
     for (let i = 1; i < days.length; i += 1) {
       if (!(days[i] > days[i - 1])) {
-        faults.push(`chain ${id} has step ${i + 1} on day ${days[i]}, which is not after step ${i} on day ${days[i - 1]}`)
+        faults.push(
+          `chain ${id} has step ${i + 1} on day ${days[i]}, which is not after step ${i} on day ${days[i - 1]}`
+        )
       }
     }
     const slugs = steps.flatMap((one, index) => {
-      const alternatives = Array.isArray(one?.variants) && one.variants.length ? one.variants : [one]
+      const alternatives =
+        Array.isArray(one?.variants) && one.variants.length ? one.variants : [one]
       return alternatives.map((each, nth) =>
         index === 0 && nth === 0 ? '' : slugOf(each) || slugOf(one)
       )
@@ -289,15 +297,23 @@ export function defineChain(spec) {
     }
   }
   if (spec.spendsDailyCap != null && !CAP_POLICIES.includes(spec.spendsDailyCap)) {
-    faults.push(`chain ${id} has spendsDailyCap ${JSON.stringify(spec.spendsDailyCap)}, which is not one of ${CAP_POLICIES.join(', ')}`)
+    faults.push(
+      `chain ${id} has spendsDailyCap ${JSON.stringify(spec.spendsDailyCap)}, which is not one of ${CAP_POLICIES.join(', ')}`
+    )
   }
-  if (spec.expiresAfter != null && (!Number.isInteger(spec.expiresAfter) || spec.expiresAfter <= 0)) {
-    faults.push(`chain ${id} has expiresAfter ${JSON.stringify(spec.expiresAfter)}, which is not a positive whole number of days`)
+  if (
+    spec.expiresAfter != null &&
+    (!Number.isInteger(spec.expiresAfter) || spec.expiresAfter <= 0)
+  ) {
+    faults.push(
+      `chain ${id} has expiresAfter ${JSON.stringify(spec.expiresAfter)}, which is not a positive whole number of days`
+    )
   }
   if (spec.segments != null && spec.segments !== 'all' && !Array.isArray(spec.segments)) {
     faults.push(`chain ${id} has segments that are neither 'all' nor a list`)
   }
-  if (faults.length) throw new Error(`chain ${id ?? '(unnamed)'} is not valid:\n- ${faults.join('\n- ')}`)
+  if (faults.length)
+    throw new Error(`chain ${id ?? '(unnamed)'} is not valid:\n- ${faults.join('\n- ')}`)
 
   return Object.freeze({
     id,
@@ -305,7 +321,8 @@ export function defineChain(spec) {
     about: spec.about ?? '',
     family: spec.family ?? id,
     source: spec.source ?? null,
-    segments: spec.segments === 'all' || spec.segments == null ? 'all' : Object.freeze([...spec.segments]),
+    segments:
+      spec.segments === 'all' || spec.segments == null ? 'all' : Object.freeze([...spec.segments]),
     sender: Object.freeze({ ...(spec.sender ?? {}) }),
     spendsDailyCap: spec.spendsDailyCap ?? 'first-step-only',
     exits: Object.freeze([...STANDING_EXITS, ...(spec.exits ?? [])]),

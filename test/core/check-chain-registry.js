@@ -62,7 +62,8 @@ check('every letter carries the chain it came from', () =>
     built.letters.every(one => built.chainById(one.chain) !== null),
     true,
     'letters with a known chain'
-  ))
+  )
+)
 
 check("every letter carries its step's day and channel", () => {
   const meeting = built.letters.find(one => one.id === 'scored-intro-meeting')
@@ -87,14 +88,16 @@ check('a step that needs a column passes that need to its letters', () =>
     built.letters.find(one => one.id === 'scored-lawsuit').needs.join(','),
     'case_filed_on',
     'needs'
-  ))
+  )
+)
 
 check('a step that drops the unsubscribe line passes that to its letters', () =>
   same(
     built.letters.find(one => one.id === 'scored-intro-meeting').unsubscribeLink,
     false,
     'unsubscribeLink'
-  ))
+  )
+)
 
 // ── The chain a letter belongs to is looked up ──────────────────────────
 
@@ -104,7 +107,8 @@ check('a letter id answers with its own chain', () => {
 })
 
 check('an id nothing knows answers with nothing, rather than with a guess', () =>
-  same(built.chainOf('retired-letter-from-before'), null, 'chainOf'))
+  same(built.chainOf('retired-letter-from-before'), null, 'chainOf')
+)
 
 check('a chain that shares a word with another is told apart from it', () => {
   // The studio's report decided a letter's chain by asking whether its id
@@ -139,7 +143,8 @@ check('a business whose source nothing claims is on the default chain', () => {
 })
 
 check('the default chain is the one naming no source', () =>
-  same(built.defaultChain.id, 'intro', 'defaultChain'))
+  same(built.defaultChain.id, 'intro', 'defaultChain')
+)
 
 // ── The days, read off each chain rather than off one constant ──────────
 
@@ -176,7 +181,11 @@ refuses(
   'two chains with no source between them',
   [
     INTRODUCTION,
-    defineChain({ id: 'other', name: 'Other', steps: [{ at: 0, channel: 'email', letter: words }] }),
+    defineChain({
+      id: 'other',
+      name: 'Other',
+      steps: [{ at: 0, channel: 'email', letter: words }],
+    }),
   ],
   'both name no source'
 )
@@ -216,13 +225,15 @@ check('a registry with no chains is refused', async () =>
   ok(
     await refusal(() => createChains({ chains: [], segments: SEGMENTS, segmentOf })),
     'an empty list was accepted'
-  ))
+  )
+)
 
 check('a registry with no segments is refused', async () =>
   ok(
     await refusal(() => createChains({ chains: FOUR, segments: [], segmentOf })),
     'an empty segment list was accepted'
-  ))
+  )
+)
 
 // ── A chain whose segments are narrowed ─────────────────────────────────
 
@@ -255,7 +266,8 @@ check('a chain can reach somebody by something other than a letter', () => {
 })
 
 check("a chain's own exit is carried onto the chain", () =>
-  ok(BROKEN_SITE.exits.includes('cert_fixed'), 'the exit was dropped'))
+  ok(BROKEN_SITE.exits.includes('cert_fixed'), 'the exit was dropped')
+)
 
 await finish({ hint: 'src/core/chains/registry.js derives all of this from the manifests.' })
 

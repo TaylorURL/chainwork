@@ -76,6 +76,8 @@ check('no core module reaches outside the package', () => {
   same(faults.join('\n'), '', 'imports that leave the package')
 })
 
-await finish({ hint: 'src/core and src/engine must load standing alone, with no host behind them.' })
+await finish({
+  hint: 'src/core and src/engine must load standing alone, with no host behind them.',
+})
 
 console.log(`core loads: ${cases.length} checks passed`)

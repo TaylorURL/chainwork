@@ -44,19 +44,24 @@ installOwnDomains([
 ])
 
 check('a domain nobody held is free to write to', () =>
-  same(heldDomainOf('a-stranger.example'), null, 'heldDomainOf'))
+  same(heldDomainOf('a-stranger.example'), null, 'heldDomainOf')
+)
 
 check('a domain held at somebody’s request is held', () =>
-  same(heldDomainOf('asked-to-stop.example'), 'asked-to-stop.example', 'heldDomainOf'))
+  same(heldDomainOf('asked-to-stop.example'), 'asked-to-stop.example', 'heldDomainOf')
+)
 
 check('a domain the host owns is held', () =>
-  same(heldDomainOf('taylorurl.com'), 'taylorurl.com', 'heldDomainOf'))
+  same(heldDomainOf('taylorurl.com'), 'taylorurl.com', 'heldDomainOf')
+)
 
 check('a site the host built is held', () =>
-  same(heldDomainOf('a-client.example'), 'a-client.example', 'heldDomainOf'))
+  same(heldDomainOf('a-client.example'), 'a-client.example', 'heldDomainOf')
+)
 
 check('a subdomain of a held domain is held', () =>
-  same(heldDomainOf('shop.a-client.example'), 'a-client.example', 'heldDomainOf'))
+  same(heldDomainOf('shop.a-client.example'), 'a-client.example', 'heldDomainOf')
+)
 
 check('the two lists keep their own reasons apart', () => {
   same(heldReasonOf('asked-to-stop.example'), HELD_REASON, 'a domain held by request')
@@ -65,7 +70,8 @@ check('the two lists keep their own reasons apart', () => {
 })
 
 check('an address is read down to its host', () =>
-  ok(ownDomainsHeld().includes('a-client.example'), `the list holds ${ownDomainsHeld().join(', ')}`))
+  ok(ownDomainsHeld().includes('a-client.example'), `the list holds ${ownDomainsHeld().join(', ')}`)
+)
 
 check('anything that does not read as a host is left out rather than guessed at', () => {
   installOwnDomains(['taylorurl.com', '', null, undefined, '   '])

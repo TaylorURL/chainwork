@@ -177,7 +177,7 @@ export function createLetters({ letters, segmentOf, firstFamily, ownLetterSource
     throw new TypeError('createLetters needs a list of letters')
   }
   if (typeof segmentOf !== 'function') {
-    throw new TypeError('createLetters needs segmentOf, which reads a row\'s segment')
+    throw new TypeError("createLetters needs segmentOf, which reads a row's segment")
   }
   if (typeof firstFamily !== 'string' || !firstFamily) {
     throw new TypeError('createLetters needs firstFamily, the family a letter naming none is in')
@@ -418,8 +418,7 @@ export function createLetters({ letters, segmentOf, firstFamily, ownLetterSource
     // the studio's own module exported, rather than two places to import from.
     stepOf,
     sendsAt,
-    wouldEmptySegment: (variants = VARIANTS, id, change) =>
-      wouldEmptySegment(variants, id, change),
+    wouldEmptySegment: (variants = VARIANTS, id, change) => wouldEmptySegment(variants, id, change),
     VARIANT_STATUSES,
     WEIGHT_MAX,
   }

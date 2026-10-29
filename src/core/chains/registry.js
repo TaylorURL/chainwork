@@ -142,7 +142,9 @@ export function createChains({ chains, segments, segmentOf, firstFamily = null }
   }
 
   const byId = new Map(chains.map(chain => [chain.id, chain]))
-  const bySource = new Map(chains.filter(chain => chain.source !== null).map(chain => [chain.source, chain]))
+  const bySource = new Map(
+    chains.filter(chain => chain.source !== null).map(chain => [chain.source, chain])
+  )
   const byLetter = new Map(letters.map(one => [one.id, byId.get(one.chain)]))
   const byFamily = new Map(chains.map(chain => [chain.family, chain]))
 

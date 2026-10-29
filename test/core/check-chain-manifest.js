@@ -7,7 +7,13 @@
  * where the failure reads as a bad row rather than as a bad chain.
  */
 
-import { CHANNELS, defineChain, fromCode, fromRow, letterIdFor } from '../../src/core/chains/manifest.js'
+import {
+  CHANNELS,
+  defineChain,
+  fromCode,
+  fromRow,
+  letterIdFor,
+} from '../../src/core/chains/manifest.js'
 import { cases, check, finish, ok, refusal, same } from '../harness/checks.js'
 
 const words = fromCode(() => ({ subject: 's', paragraphs: ['p'] }))
@@ -27,16 +33,20 @@ check('a chain comes back frozen', () => {
 })
 
 check('a chain whose family is unsaid takes its own id', () =>
-  same(defineChain(good).family, 'intro', 'family'))
+  same(defineChain(good).family, 'intro', 'family')
+)
 
 check('a chain states its family where the two differ', () =>
-  same(defineChain({ ...good, family: 'introduction' }).family, 'introduction', 'family'))
+  same(defineChain({ ...good, family: 'introduction' }).family, 'introduction', 'family')
+)
 
 check('a chain naming no source is the one businesses fall to', () =>
-  same(defineChain(good).source, null, 'source'))
+  same(defineChain(good).source, null, 'source')
+)
 
 check('a chain takes every segment unless it names some', () =>
-  same(defineChain(good).segments, 'all', 'segments'))
+  same(defineChain(good).segments, 'all', 'segments')
+)
 
 check('the three standing exits are in every chain', () => {
   const chain = defineChain(good)
@@ -52,18 +62,22 @@ check("a chain's own exits are added to the standing ones", () => {
 })
 
 check('the day cap policy defaults to the first step alone', () =>
-  same(defineChain(good).spendsDailyCap, 'first-step-only', 'spendsDailyCap'))
+  same(defineChain(good).spendsDailyCap, 'first-step-only', 'spendsDailyCap')
+)
 
 check('nothing expires unless the chain says it does', () =>
-  same(defineChain(good).expiresAfter, null, 'expiresAfter'))
+  same(defineChain(good).expiresAfter, null, 'expiresAfter')
+)
 
 // ── Ids ─────────────────────────────────────────────────────────────────
 
 check('step one is registered under the chain id alone', () =>
-  same(letterIdFor('intro', { slug: '' }, 'scored'), 'scored-intro', 'id'))
+  same(letterIdFor('intro', { slug: '' }, 'scored'), 'scored-intro', 'id')
+)
 
 check('a later step is registered under the chain id and its slug', () =>
-  same(letterIdFor('intro', { slug: 'meeting' }, 'scored'), 'scored-intro-meeting', 'id'))
+  same(letterIdFor('intro', { slug: 'meeting' }, 'scored'), 'scored-intro-meeting', 'id')
+)
 
 check('a step may state an id outright, for one already stored', () => {
   const chain = defineChain({
@@ -79,7 +93,10 @@ const refuses = (what, spec, saying) =>
   check(`a chain ${what} is refused`, async () => {
     const said = await refusal(() => defineChain(spec))
     ok(said, 'it was accepted')
-    ok(said.includes(saying), `the refusal said ${JSON.stringify(said)}, which does not mention ${JSON.stringify(saying)}`)
+    ok(
+      said.includes(saying),
+      `the refusal said ${JSON.stringify(said)}, which does not mention ${JSON.stringify(saying)}`
+    )
   })
 
 refuses('with no id', { ...good, id: undefined }, 'chain id')
@@ -187,23 +204,30 @@ check('a step may carry two letters drawn between by weight', () => {
       {
         at: 0,
         channel: 'email',
-        variants: [
-          { letter: words },
-          { slug: 'short', letter: words, weight: 3 },
-        ],
+        variants: [{ letter: words }, { slug: 'short', letter: words, weight: 3 }],
       },
     ],
   })
-  same(chain.steps[0].variants.map(one => `${one.slug}:${one.weight}`).join(' '), ':1 short:3', 'the letters')
+  same(
+    chain.steps[0].variants.map(one => `${one.slug}:${one.weight}`).join(' '),
+    ':1 short:3',
+    'the letters'
+  )
 })
 
 check('the first letter at a step keeps the id already stored', () => {
   const chain = defineChain({
     ...good,
-    steps: [{ at: 0, channel: 'email', variants: [{ letter: words }, { slug: 'b', letter: words }] }],
+    steps: [
+      { at: 0, channel: 'email', variants: [{ letter: words }, { slug: 'b', letter: words }] },
+    ],
   })
   same(letterIdFor(chain.id, chain.steps[0].variants[0], 'scored'), 'scored-intro', 'the first id')
-  same(letterIdFor(chain.id, chain.steps[0].variants[1], 'scored'), 'scored-intro-b', 'the second id')
+  same(
+    letterIdFor(chain.id, chain.steps[0].variants[1], 'scored'),
+    'scored-intro-b',
+    'the second id'
+  )
 })
 
 refuses(
@@ -234,7 +258,8 @@ refuses(
 )
 
 check('every channel a step may name is one a host can register', () =>
-  same(CHANNELS.includes('email') && CHANNELS.includes('call'), true, 'channels'))
+  same(CHANNELS.includes('email') && CHANNELS.includes('call'), true, 'channels')
+)
 
 // ── Where the words come from ───────────────────────────────────────────
 
@@ -252,10 +277,12 @@ check('fromRow names the column the written letter is filed in', () => {
 })
 
 check('fromCode refuses anything but a function', async () =>
-  ok(await refusal(() => fromCode('words')), 'a string was accepted'))
+  ok(await refusal(() => fromCode('words')), 'a string was accepted')
+)
 
 check('fromRow refuses an unnamed column', async () =>
-  ok(await refusal(() => fromRow('')), 'an empty column was accepted'))
+  ok(await refusal(() => fromRow('')), 'an empty column was accepted')
+)
 
 await finish({ hint: 'src/core/chains/manifest.js is what decides all of this.' })
 

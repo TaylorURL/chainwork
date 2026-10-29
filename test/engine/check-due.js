@@ -48,11 +48,27 @@ check("the cold intro's reminder falls due a fortnight after the first letter", 
 
 check("the preview's follow-ups fall due on its own three, eight and eighteen", () => {
   const first = [sentOn(1, 1)]
-  same(dueOn({ chain: preview, prospect: business, sent: first, now: day(3) }).ready, false, 'on day 2')
-  same(dueOn({ chain: preview, prospect: business, sent: first, now: day(4) }).ready, true, 'on day 3')
+  same(
+    dueOn({ chain: preview, prospect: business, sent: first, now: day(3) }).ready,
+    false,
+    'on day 2'
+  )
+  same(
+    dueOn({ chain: preview, prospect: business, sent: first, now: day(4) }).ready,
+    true,
+    'on day 3'
+  )
   const third = [sentOn(1, 1), sentOn(2, 4)]
-  same(dueOn({ chain: preview, prospect: business, sent: third, now: day(9) }).owed, 3, 'the step owed')
-  same(dueOn({ chain: preview, prospect: business, sent: third, now: day(9) }).ready, true, 'on day 8')
+  same(
+    dueOn({ chain: preview, prospect: business, sent: third, now: day(9) }).owed,
+    3,
+    'the step owed'
+  )
+  same(
+    dueOn({ chain: preview, prospect: business, sent: third, now: day(9) }).ready,
+    true,
+    'on day 8'
+  )
 })
 
 check('a chain of one letter ends after it', () => {
@@ -129,10 +145,12 @@ for (const [column, ending] of [
 
 check('a suppressed business is off every chain', () =>
   same(
-    dueOn({ chain: intro, prospect: { ...business, suppressed: true }, sent: [], now: day(1) }).ended,
+    dueOn({ chain: intro, prospect: { ...business, suppressed: true }, sent: [], now: day(1) })
+      .ended,
     ENDINGS.UNSUBSCRIBED,
     'ended'
-  ))
+  )
+)
 
 check("a chain's own exit column ends it", () => {
   const fixed = { ...business, cert_fixed: true }
@@ -163,21 +181,37 @@ check('an unclaimed draft comes down on its own day, whatever step it reached', 
 
 check('a chain with no expiry never expires, it only runs out of steps', () => {
   const whole = [sentOn(1, 1), sentOn(2, 15)]
-  same(dueOn({ chain: intro, prospect: business, sent: whole, now: day(400) }).ended, ENDINGS.COMPLETE, 'the cold intro')
+  same(
+    dueOn({ chain: intro, prospect: business, sent: whole, now: day(400) }).ended,
+    ENDINGS.COMPLETE,
+    'the cold intro'
+  )
   // The preview would have expired on day twenty-one; the intro has no expiry
   // and simply ends when its last step has gone.
-  same(dueOn({ chain: preview, prospect: business, sent: [sentOn(1, 1)], now: day(400) }).ended, ENDINGS.EXPIRED, 'the preview')
+  same(
+    dueOn({ chain: preview, prospect: business, sent: [sentOn(1, 1)], now: day(400) }).ended,
+    ENDINGS.EXPIRED,
+    'the preview'
+  )
 })
 
 check('a chain that has ended is never reopened', () => {
   const replied = { ...business, replied_at: day(2).toISOString() }
   for (const n of [3, 15, 30, 100]) {
-    same(dueOn({ chain: intro, prospect: replied, sent: [sentOn(1, 1)], now: day(n) }).ready, false, `day ${n}`)
+    same(
+      dueOn({ chain: intro, prospect: replied, sent: [sentOn(1, 1)], now: day(n) }).ready,
+      false,
+      `day ${n}`
+    )
   }
 })
 
 check('dueOn refuses to work without the moment it is being asked about', async () =>
-  ok(await refusal(() => dueOn({ chain: intro, prospect: business, sent: [] })), 'it answered anyway'))
+  ok(
+    await refusal(() => dueOn({ chain: intro, prospect: business, sent: [] })),
+    'it answered anyway'
+  )
+)
 
 // ── A step that is not a letter ─────────────────────────────────────────
 
@@ -217,7 +251,9 @@ const sent = new Map([
 ])
 
 check('only the businesses actually ready come back', () => {
-  const ready = readyNow({ registry, prospects: rows, sent, now: day(15) }).map(one => one.prospect.id)
+  const ready = readyNow({ registry, prospects: rows, sent, now: day(15) }).map(
+    one => one.prospect.id
+  )
   // The preview's second letter fell due on day three and the intro's reminder
   // on day fourteen, so the preview leads; the business owed a first letter
   // has no calendar day and comes last.
@@ -234,7 +270,9 @@ check('each one comes back with the chain it is on and the step it is owed', () 
 })
 
 check('the oldest due comes first, and a first letter last', () => {
-  const ready = readyNow({ registry, prospects: rows, sent, now: day(30) }).map(one => one.prospect.id)
+  const ready = readyNow({ registry, prospects: rows, sent, now: day(30) }).map(
+    one => one.prospect.id
+  )
   // 'due' fell due on day 14 and 'waiting' on day 23, so 'due' leads; 'new'
   // has no calendar day at all and sorts behind both.
   same(ready.join(' '), 'due waiting new', 'the order')
