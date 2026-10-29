@@ -158,8 +158,22 @@ export function createChains({ chains, segments, segmentOf, firstFamily = null }
   /** The chain a letter id belongs to, or null where nothing knows the id. */
   const chainOf = id => byLetter.get(id) ?? null
 
-  /** The chain a business is on: the one claiming its source, else the default. */
-  const chainFor = prospect => bySource.get(prospect?.source ?? null) ?? fallback
+  /**
+   * The chain a business is on.
+   *
+   * Its own `chain` column where it has one, then the chain claiming its
+   * source, then the default. The column comes first because a trigger moves a
+   * business onto a chain without destroying where it was found: a shop swept
+   * off the map whose certificate has just expired is still a shop off the
+   * map, and the broken-site chain is what it should hear from next. Writing
+   * the chain over its source would lose the second fact to record the first.
+   *
+   * A column naming a chain nothing knows is passed over rather than trusted,
+   * so a chain retired after a business was moved onto it leaves that business
+   * on whatever its source claims instead of on no chain at all.
+   */
+  const chainFor = prospect =>
+    byId.get(prospect?.chain) ?? bySource.get(prospect?.source ?? null) ?? fallback
 
   /** The chain a family names, which is how a stored family is read back. */
   const chainByFamily = family => byFamily.get(family) ?? null
