@@ -16,7 +16,7 @@ is that the letters, the brand and the host now arrive as arguments.
 ```
 core        pure. no database, no network, no clock of its own.
 engine      what a chain is owed next, and the contracts a host fills in. pure.
-adapters    code that reaches something: a lead finder, a site check.
+adapters    one per source. the judging is pure. only site-health opens a socket.
 chains      the chain files. one per chain.
 ```
 
@@ -89,12 +89,58 @@ A source is where businesses come from, `{ id, find }`, answering rows shaped
 source that fails does not stop the others: a pipeline that stopped at the
 first refused source is a pipeline one outage could empty.
 
-`adapters/site-health` is a working source. It visits a site, reads the
-certificate off the handshake, and files the ones that are actually broken: an
-expired certificate, a home page that errors, a domain about to lapse. What it
-deliberately does not file is as important. A redirect, a slow answer and a
-page that refuses a robot all read as faults in the obvious version of this,
-and each would mean writing to the owner of a working site to say it is down.
+## The triggers
+
+A source is written per directory under `adapters`, and each splits the same
+way: a judge that decides from one row and nothing else, and a thin source
+around it that walks the rows and files what the judge marked. The judge is
+where the arguing happens, so it can be exercised without a network.
+
+- `site-health` visits a site, reads the certificate off the handshake, and
+  files the ones that are actually broken: an expired certificate, a home page
+  that errors, a domain about to lapse. What it deliberately does not file is
+  as important. A redirect, a slow answer and a page that refuses a robot all
+  read as faults in the obvious version of this, and each would mean writing to
+  the owner of a working site to say it is down. It stops with one visit's
+  worth of its budget still in hand, so a sweep ends itself rather than being
+  killed with the table half read.
+- `builder` reads what made a page off its generator tag and its footer credit.
+  The builders worth a letter are listed, and the ones to leave alone are
+  listed at greater length, because that is the list that stops a mistake. A
+  real run over the studio's own rows found a site whose tag said Elementor,
+  and without that name down as fine the page read as one worth replacing,
+  which is a letter arguing with a decision somebody made on purpose.
+- `listing` reads faults off the columns a map sweep already stores, in the
+  order the owner would fix them: marked closed, then no site, then no photos,
+  then too few reviews. A business that has genuinely shut is not a lead, and
+  neither is a row with no review count at all, which has not been read rather
+  than having nothing to show.
+- `growth` compares the reviews a business has now against the count it was
+  filed at. A gain of ten and a gain of half what it started with both have to
+  hold. Four hundred reviews to four hundred and twelve gained twelve and is
+  not growing; six to eighteen gained twelve and tripled. Either test on its
+  own reads half the table as growing.
+- `reactivation` is the cheapest list there is, businesses already on file and
+  left alone for a hundred and eighty days: the site that never answered, the
+  row a rule put aside, the one that was written to and never replied. A
+  business that asked to stop is never on it, and neither is one somebody took
+  out by hand. A person's own decision is not something for a timer to
+  overturn.
+
+Only `site-health` opens a socket. `builder` is handed a `read` and the other
+three need nothing but the rows already stored, so those three cost nothing at
+the map and need no second account anywhere.
+
+Both spellings of a permanently closed listing are held in one place in the
+core. Google's places data has used `CLOSED_PERMANENTLY` and
+`PERMANENTLY_CLOSED` over the life of the API, and a judge that knew one of
+them would read a listing marked with the other as trading.
+
+A business a trigger finds keeps the source it was found under and carries the
+chain it was moved onto in a column of its own, which `chainFor` reads first. A
+shop swept off the map whose certificate has just expired is still a shop off
+the map. Writing the chain over the source would lose the second fact to record
+the first.
 
 ## Ids never move
 
