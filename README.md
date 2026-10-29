@@ -1,39 +1,29 @@
 # chainwork
 
-Outreach chains. One file describes a chain; one engine runs them all.
+Outreach chains. One file describes a chain, one engine runs them all.
 
-A chain is a sequence of touches to one business — a letter, then a call, then
-another letter — with the days between them, what puts a business on it, and
+A chain is a sequence of touches to one business, a letter then a call then
+another letter, with the days between them, what puts a business on it, and
 what takes it off. Writing that down once is the whole idea. Adding a chain is
 adding a file.
 
 This is TaylorURL's outreach lifted out of the studio so a second site can use
-it. Every decision in here was already made and already running; what changed
+it. Every decision in here was already made and already running. What changed
 is that the letters, the brand and the host now arrive as arguments.
-
-## What it is for
-
-A studio or agency that reaches out to businesses: finds them, works out which
-are worth writing to, writes, follows up, reads the replies, and keeps a list
-clean enough that the mail arrives. The hard parts are not the sending. They
-are the warm-up ladder per address, the rest after a mail server refuses the
-mailbox, the queue ordering that cannot truncate its own best leads, the
-exclusion rules that read in both directions, and the sequence arithmetic that
-does not drag a chain later every time a step slips. All of that is here.
 
 ## Layers
 
 ```
 core        pure. no database, no network, no clock of its own.
 engine      what a chain is owed next. pure.
+chains      the manifests. one file per chain, the host's own.
 adapters    the host's own: a database, a mail server, a lead finder.
-chains      the manifests. one file per chain.
 ```
 
-A caller only ever imports the layer beneath it. The core is browser-safe, so a
-console can bundle it beside the table it draws, with one exception named out
-loud: `core/prospects/address.js` asks DNS whether a domain can take mail, so
-it is server-side and kept out of the barrel.
+Only the first two ship here. A caller only ever imports the layer beneath it.
+The core is browser-safe, so a console can bundle it beside the table it draws,
+with one exception named out loud: `core/prospects/address.js` asks DNS whether
+a domain can take mail, so it is server-side and kept out of the barrel.
 
 ## A chain
 
@@ -58,8 +48,8 @@ one before. A step held back over a weekend therefore catches up rather than
 pushing every step behind it later, which is the one thing the studio's own
 version got wrong and only showed on a Monday.
 
-`channel` is how the step reaches somebody — `email`, `call`, `sms`, `post`,
-`retarget`. A step that is not a letter is a step like any other: it falls due
+`channel` is how the step reaches somebody: `email`, `call`, `sms`, `post` or
+`retarget`. A step that is not a letter is a step like any other. It falls due
 on its own day and it is recorded on the same timeline.
 
 A step may carry `variants`, two letters written for the same day and drawn
@@ -89,11 +79,31 @@ that can mail on import.
 ## Ids never move
 
 A letter's id is stored on every message ever sent under it, so renaming one
-detaches that history from the letter that made it. Ids are derived from the
-chain id and the step's slug and the derivation is fixed: step one takes the
-chain id alone, and every step after it takes the chain id and its slug. A step
-may also state an id outright, which is how a chain adopts letters that were
-registered by hand before it existed.
+detaches that history from the letter that made it. An id is the segment, the
+chain id and the step's slug, and the derivation is fixed: step one leaves the
+slug off, which is what the studio's four letters were already called, and
+every step after it carries its own. A step may also state an id outright,
+which is how a chain adopts letters that were registered by hand before it
+existed.
+
+## The rest of the core
+
+Chains are the new half. The rest came over as it was, because the hard parts
+of outreach were never the sending.
+
+- `sending/ramp.js` moves the day's cap on its own while the trailing bounce
+  rate stays clean, and rolls it back and stops on a breach. A ceiling somebody
+  has to raise by hand every morning is a ceiling never reached.
+- `sending/mailbox.js` tells a refusal about one recipient from a refusal of
+  the mailbox, and rests the mailbox on the second. Knocking again after Gmail
+  has closed the door reads worse than the letters do.
+- `sending/rank.js` holds the queue's whole ordering in one place, so the read
+  that pages the queue and the comparator that sorts it cannot disagree. When
+  they do, the best leads are never in the rows anybody looked at and a
+  truncated read looks exactly like a healthy one.
+- `prospects/exclusions.js` marks the rows cold outreach does not write to.
+  Every rule marks and none removes, so a row skipped this week is found again
+  next week and stays skipped rather than being weighed from nothing.
 
 ## Running the checks
 
@@ -102,9 +112,9 @@ npm test
 ```
 
 Each check is its own file and its own process, because some of them install
-something once — a zone, a held-domain list — and a check sharing a process
-with one of those is reading a module somebody else configured.
+something once, a zone or a held-domain list, and a check sharing a process
+with one of those is reading a module somebody else configured. The first
+failure stops the run.
 
-## License
-
-Proprietary; all rights reserved. See [LICENSE.md](LICENSE.md).
+Built with Node 22 and no dependencies. Proprietary; all rights reserved, see
+[LICENSE.md](LICENSE.md).
