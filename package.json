@@ -1,0 +1,25 @@
+{
+  "name": "chainwork",
+  "version": "0.1.0",
+  "description": "Outreach chains: one file describes a chain, one engine runs them all.",
+  "type": "module",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "private": true,
+  "engines": { "node": ">=22" },
+  "exports": {
+    "./core": "./src/core/index.js",
+    "./core/*": "./src/core/*",
+    "./engine": "./src/engine/index.js",
+    "./engine/*": "./src/engine/*",
+    "./adapters/*": "./src/adapters/*"
+  },
+  "files": ["src", "README.md", "LICENSE.md"],
+  "scripts": {
+    "test": "node test/run.js",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "prettier": "^3.3.3"
+  }
+}
