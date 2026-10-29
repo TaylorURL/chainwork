@@ -16,7 +16,7 @@ import { readdirSync } from 'node:fs'
 import { join } from 'node:path'
 
 const here = new URL('.', import.meta.url).pathname
-const folders = ['core', 'engine']
+const folders = ['core', 'engine', 'adapters']
 
 const checks = folders.flatMap(folder =>
   readdirSync(join(here, folder))
