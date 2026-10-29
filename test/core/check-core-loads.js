@@ -25,15 +25,27 @@ function filesUnder(folder) {
   return found
 }
 
-/** The one module that may reach a Node built-in, and what it reaches for. */
-const SERVER_ONLY = new Map([['core/prospects/address.js', 'node:dns/promises']])
+/**
+ * The modules that may reach a Node built-in, and what each reaches for.
+ *
+ * The core is bundled by a browser, so a built-in imported into it is a build
+ * that fails on the site rather than here. Two reach one anyway and both are
+ * named rather than left to be discovered: one asks DNS whether a domain can
+ * take mail, and one reads a certificate off a handshake. Neither is in the
+ * core barrel, and the adapters are server-side by definition.
+ */
+const SERVER_ONLY = new Map([
+  ['core/prospects/address.js', 'node:dns/promises'],
+  ['adapters/site-health/visit.js', 'node:tls'],
+])
 
 const core = filesUnder(join(root, 'core'))
 const engine = filesUnder(join(root, 'engine'))
+const adapters = filesUnder(join(root, 'adapters'))
 
 check('there is a core to check', core.length > 10)
 
-for (const path of [...core, ...engine]) {
+for (const path of [...core, ...engine, ...adapters]) {
   const relative = path.slice(root.length)
   check(`${relative} loads`, async () => {
     const loaded = await import(path)
@@ -41,7 +53,7 @@ for (const path of [...core, ...engine]) {
   })
 }
 
-for (const path of [...core, ...engine]) {
+for (const path of [...core, ...engine, ...adapters]) {
   const relative = path.slice(root.length)
   const source = readFileSync(path, 'utf8')
   const builtins = [...source.matchAll(/from '(node:[^']+)'/g)].map(one => one[1])
@@ -62,7 +74,7 @@ check('the core barrel leaves the one server-only module out', async () => {
 
 check('no core module reaches outside the package', () => {
   const faults = []
-  for (const path of [...core, ...engine]) {
+  for (const path of [...core, ...engine, ...adapters]) {
     const source = readFileSync(path, 'utf8')
     for (const [, where] of source.matchAll(/from '([^']+)'/g)) {
       if (where.startsWith('node:')) continue

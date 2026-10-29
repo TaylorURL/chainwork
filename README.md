@@ -25,9 +25,9 @@ does not drag a chain later every time a step slips. All of that is here.
 
 ```
 core        pure. no database, no network, no clock of its own.
-engine      what a chain is owed next. pure.
-adapters    the host's own: a database, a mail server, a lead finder.
-chains      the manifests. one file per chain.
+engine      what a chain is owed next, and the contracts a host fills in. pure.
+adapters    code that reaches something: a lead finder, a site check.
+chains      the chain files. one per chain.
 ```
 
 A caller only ever imports the layer beneath it. The core is browser-safe, so a
@@ -85,6 +85,26 @@ they fell due, oldest first and first letters last.
 Nothing in either of those sends anything. The host does that, through its own
 adapters, which is what keeps a package that is imported from being a package
 that can mail on import.
+
+## Channels and sources
+
+A channel is how a step reaches somebody — an object with a `send`, registered
+under the name a step uses. `assertChannelsFor` is given the chains and the
+registered channels at startup and refuses the pair where a chain names one
+nothing can send, so that fault arrives when the host starts rather than when a
+business was due a call.
+
+A source is where businesses come from — `{ id, find }`, answering rows shaped
+`{ source, ref, payload }`. One `sweep` walks every registered source, and a
+source that fails does not stop the others: a pipeline that stopped at the
+first refused source is a pipeline one outage could empty.
+
+`adapters/site-health` is a working source. It visits a site, reads the
+certificate off the handshake, and files the ones that are actually broken — an
+expired certificate, a home page that errors, a domain about to lapse. What it
+deliberately does not file is as important: a redirect, a slow answer and a
+page that refuses a robot all read as faults in the obvious version of this,
+and each would mean writing to the owner of a working site to say it is down.
 
 ## Ids never move
 
