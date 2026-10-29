@@ -22,6 +22,8 @@
  * nobody has.
  */
 
+import { CLOSED_FOR_GOOD, CLOSED_FOR_NOW } from '../../core/prospects/youth.js'
+
 /** Photographs below which a listing reads as having none worth showing. */
 export const PHOTOS_EXPECTED = 3
 
@@ -30,6 +32,15 @@ export const REVIEWS_EXPECTED = 5
 
 /** The faults, worst first, which is the order they are reported in. */
 export const LISTING_FAULTS = Object.freeze(['marked-closed', 'no-site', 'no-photos', 'no-reviews'])
+
+/**
+ * What a listing says when it is shut, read off the same list the rest of the
+ * package reads. Both spellings of the permanent one are on it: Google's
+ * places data has used each over the life of the API, and a judge that knew
+ * one of them would write to a business that had shut under the other.
+ */
+const shutForGood = status => CLOSED_FOR_GOOD.includes(status)
+const shutForNow = status => CLOSED_FOR_NOW.includes(status)
 
 const photosOn = row => {
   const held = row?.place_photos
@@ -46,8 +57,8 @@ const photosOn = row => {
  */
 export function listingFaultOf(row) {
   const status = String(row?.business_status ?? '').toUpperCase()
-  if (status === 'PERMANENTLY_CLOSED') return null
-  if (status === 'CLOSED_TEMPORARILY') {
+  if (shutForGood(status)) return null
+  if (shutForNow(status)) {
     return {
       fault: 'marked-closed',
       says: 'the Google listing says the business is temporarily closed',

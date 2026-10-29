@@ -93,7 +93,25 @@ export const YOUTHS = Object.freeze(['young', 'established', 'unread'])
  * says, and promoting it to the front of the queue on a low count would be the
  * ranking arguing hardest for the row least likely to answer.
  */
-const CLOSED = Object.freeze(['CLOSED_PERMANENTLY', 'CLOSED_TEMPORARILY'])
+/**
+ * What a listing says when it is not trading.
+ *
+ * Both spellings of the permanent one. Google's places data has used
+ * CLOSED_PERMANENTLY and PERMANENTLY_CLOSED over the life of the API, and a
+ * list holding one of them reads a listing marked with the other as open -
+ * which is a letter to a business that has shut.
+ */
+export const CLOSED = Object.freeze([
+  'CLOSED_PERMANENTLY',
+  'PERMANENTLY_CLOSED',
+  'CLOSED_TEMPORARILY',
+])
+
+/** The permanent ones alone, for a reading that treats the two differently. */
+export const CLOSED_FOR_GOOD = Object.freeze(['CLOSED_PERMANENTLY', 'PERMANENTLY_CLOSED'])
+
+/** The temporary one, which is a listing somebody has stopped looking after. */
+export const CLOSED_FOR_NOW = Object.freeze(['CLOSED_TEMPORARILY'])
 
 /**
  * A stored count as a whole number, or null where there is not one to read.
