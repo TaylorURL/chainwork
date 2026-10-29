@@ -1,7 +1,7 @@
 {
   "name": "chainwork",
   "version": "0.1.0",
-  "description": "Outreach chains: one file describes a chain, one engine runs them all.",
+  "description": "Outreach chains: one file describes a chain, one engine runs them all",
   "type": "module",
   "license": "SEE LICENSE IN LICENSE.md",
   "private": true,
